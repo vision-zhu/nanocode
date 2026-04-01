@@ -1,5 +1,5 @@
 /**
- * NanoCode Post-Compaction File Attachments
+ * nanoagent Post-Compaction File Attachments
  *
  * After context compaction, the model loses its detailed knowledge of
  * recently-read files. This module re-reads the most recently accessed

@@ -1,8 +1,8 @@
 /**
- * NanoCode Session Persistence
+ * nanoagent Session Persistence
  *
  * Stores conversation transcripts as JSONL (JSON Lines) files.
- * Each session gets a directory under ~/.nanocode/sessions/{id}/
+ * Each session gets a directory under ~/.nanoagent/sessions/{id}/
  * with a transcript.jsonl file containing one JSON object per line.
  *
  * Format: each line is a SessionEntry JSON object with:
@@ -30,8 +30,8 @@ import type { Message, SessionEntry } from '../core/types.js'
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Base directory for all NanoCode sessions. */
-const SESSIONS_BASE = join(homedir(), '.nanocode', 'sessions')
+/** Base directory for all nanoagent sessions. */
+const SESSIONS_BASE = join(homedir(), '.nanoagent', 'sessions')
 
 /** Transcript filename within each session directory. */
 const TRANSCRIPT_FILE = 'transcript.jsonl'

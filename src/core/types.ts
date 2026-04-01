@@ -1,5 +1,5 @@
 /**
- * NanoCode Core Types
+ * nanoagent Core Types
  *
  * All shared type definitions for the agent system.
  * Mirrors Claude Code's type architecture with simplifications.

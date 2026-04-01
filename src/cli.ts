@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * NanoCode CLI Entry Point
+ * nanoagent CLI Entry Point
  *
  * Simple REPL + one-shot mode.
  * Key patterns from Claude Code: cli.tsx, main.tsx, REPL.tsx
@@ -98,7 +98,7 @@ function parseArgs(): CliArgs {
         result.prompt = '__HELP__'
         return result
       case '--version':
-        console.log('nanocode 0.1.0')
+        console.log('nanoagent 0.1.0')
         process.exit(0)
       default:
         if (!arg?.startsWith('-') && !result.prompt) {
@@ -120,11 +120,11 @@ async function printHelp(): Promise<void> {
     commandLines = '  (run /help in REPL for full command list)'
   }
   console.log(`
-${bold('nanocode')} — Lightweight Claude Code clone
+${bold('nanoagent')} — Lightweight Claude Code clone
 
 ${bold('Usage:')}
-  nanocode [options]           Start interactive REPL
-  nanocode -p "prompt"         One-shot mode
+  nanoagent [options]           Start interactive REPL
+  nanoagent -p "prompt"         One-shot mode
 
 ${bold('Options:')}
   -p, --prompt <text>          Run single prompt and exit
@@ -583,7 +583,7 @@ async function main(): Promise<void> {
   console.log('')
   console.log(renderLogo())
   console.log(box([
-    gold(bold('nanocode')) + dim(' v0.1.0'),
+    gold(bold('nanoagent')) + dim(' v0.1.0'),
     `${dim('Model:')} ${modelConfig.model}`,
     `${dim('CWD:')}   ${shortCwd}`,
   ]))

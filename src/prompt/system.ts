@@ -1,5 +1,5 @@
 /**
- * NanoCode System Prompt Builder
+ * nanoagent System Prompt Builder
  *
  * Constructs the multi-block system prompt that drives agent behavior.
  * The prompt is split into a STATIC part (cacheable) and a DYNAMIC part
@@ -17,7 +17,7 @@ import { SYSTEM_PROMPT_DYNAMIC_BOUNDARY } from './cache-boundary.js'
 // ---------------------------------------------------------------------------
 
 const IDENTITY = `\
-You are NanoCode, a CLI-based coding agent. You are pair programming with the \
+You are nanoagent, a CLI-based coding agent. You are pair programming with the \
 user to solve their coding task. The task may require creating a new codebase, \
 modifying or debugging an existing codebase, or simply answering a question.
 
@@ -239,14 +239,14 @@ function buildMemorySection(claudeMd: string): string {
     return ''
   }
   return `\
-## Memory (NANOCODE.md / CLAUDE.md)
+## Memory (NANOAGENT.md / CLAUDE.md)
 
-The following content was loaded from NANOCODE.md or CLAUDE.md files in the project hierarchy \
+The following content was loaded from NANOAGENT.md or CLAUDE.md files in the project hierarchy \
 and user configuration. Treat these as instructions from the user.
 
-<nanocode-md>
+<nanoagent-md>
 ${claudeMd.trim()}
-</nanocode-md>`
+</nanoagent-md>`
 }
 
 function buildEnvironmentSection(params: {

@@ -22,8 +22,8 @@ import type { McpServerConfig } from './types.js'
 /** Settings filename within .claude directories. */
 const SETTINGS_FILE = 'settings.json'
 
-/** Settings directory names — .nanocode/ takes priority over .claude/ */
-const SETTINGS_DIRS = ['.nanocode', '.claude'] as const
+/** Settings directory names — .nanoagent/ takes priority over .claude/ */
+const SETTINGS_DIRS = ['.nanoagent', '.claude'] as const
 
 // ---------------------------------------------------------------------------
 // Settings file loading
@@ -143,7 +143,7 @@ export async function loadMcpConfig(
 ): Promise<Record<string, McpServerConfig>> {
   const resolvedCwd = resolve(cwd)
 
-  // Load user-level settings (.nanocode/ first, then .claude/)
+  // Load user-level settings (.nanoagent/ first, then .claude/)
   let userServers: Record<string, McpServerConfig> = {}
   for (const dir of SETTINGS_DIRS) {
     const userSettingsPath = join(homedir(), dir, SETTINGS_FILE)
@@ -153,7 +153,7 @@ export async function loadMcpConfig(
     }
   }
 
-  // Load project-level settings (.nanocode/ first, then .claude/)
+  // Load project-level settings (.nanoagent/ first, then .claude/)
   let projectServers: Record<string, McpServerConfig> = {}
   for (const dir of SETTINGS_DIRS) {
     const projectSettingsPath = join(resolvedCwd, dir, SETTINGS_FILE)

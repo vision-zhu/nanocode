@@ -7,7 +7,7 @@ import * as os from 'node:os'
 let tmpDir: string
 
 beforeEach(async () => {
-  tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nanocode-skill-test-'))
+  tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nanoagent-skill-test-'))
 })
 
 afterEach(async () => {
@@ -233,7 +233,7 @@ Body 1`)
   })
 
   it('does not load skills from empty directory', async () => {
-    const emptyDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nanocode-empty-'))
+    const emptyDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nanoagent-empty-'))
     try {
       const skills = await loadAllSkills(emptyDir)
       // loadAllSkills also checks user home directory, so we just verify

@@ -1,5 +1,5 @@
 /**
- * NanoCode — Cost Tracker
+ * nanoagent — Cost Tracker
  *
  * Tracks API token usage and computes cost estimates based on
  * per-token pricing from the model configuration.

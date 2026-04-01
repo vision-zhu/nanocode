@@ -15,7 +15,7 @@ import {
 let tempDir: string
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), 'nanocode-memory-test-'))
+  tempDir = mkdtempSync(join(tmpdir(), 'nanoagent-memory-test-'))
 })
 
 afterEach(() => {

@@ -1,5 +1,5 @@
 /**
- * NanoCode Git Context
+ * nanoagent Git Context
  *
  * Gathers git repository information for the system prompt.
  * Collects branch name, status, and recent commit log.

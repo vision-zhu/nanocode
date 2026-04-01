@@ -127,15 +127,15 @@ const planCommand: SlashCommand = {
 
 const memoryCommand: SlashCommand = {
   name: 'memory',
-  description: 'Show NANOCODE.md / CLAUDE.md content',
+  description: 'Show NANOAGENT.md / CLAUDE.md content',
   async execute(_args, ctx) {
     const { loadClaudeMd } = await import('../context/memory.js')
     const content = await loadClaudeMd(ctx.cwd).catch(() => '')
-    if (!content) return 'No NANOCODE.md or CLAUDE.md found.'
+    if (!content) return 'No NANOAGENT.md or CLAUDE.md found.'
     const truncated = content.length > 3000
       ? content.slice(0, 3000) + dim(`\n\n... (${content.length} chars total)`)
       : content
-    return `${dim('─── NANOCODE.md / CLAUDE.md ───')}\n${truncated}`
+    return `${dim('─── NANOAGENT.md / CLAUDE.md ───')}\n${truncated}`
   },
 }
 
@@ -187,7 +187,7 @@ const skillsCommand: SlashCommand = {
         await initializeSkills(ctx.cwd)
         skills = getLoadedSkills()
       }
-      if (skills.length === 0) return 'No skills loaded. Place skills in .nanocode/skills/ or .claude/skills/ directories.'
+      if (skills.length === 0) return 'No skills loaded. Place skills in .nanoagent/skills/ or .claude/skills/ directories.'
       const lines = ['Available skills:', '']
       for (const s of skills) {
         lines.push(`  ${blue(s.name)}  ${dim(s.description || '')}`)
@@ -235,7 +235,7 @@ const contextCommand: SlashCommand = {
 
 const exitCommand: SlashCommand = {
   name: 'exit',
-  description: 'Exit nanocode',
+  description: 'Exit nanoagent',
   async execute(_args, _ctx) {
     console.log(dim('Goodbye!'))
     process.exit(0)
@@ -243,7 +243,7 @@ const exitCommand: SlashCommand = {
 }
 
 const INIT_PROMPT = `\
-Analyze this codebase and create a NANOCODE.md file in the project root.
+Analyze this codebase and create a NANOAGENT.md file in the project root.
 
 Do the following:
 1. Read key project files to understand the codebase:
@@ -254,7 +254,7 @@ Do the following:
    - Existing AI configs: CLAUDE.md, .cursorrules, .cursor/rules, AGENTS.md, .github/copilot-instructions.md
    - Use Glob and Read tools to explore. Check the directory structure first with Glob.
 
-2. Based on your analysis, write a NANOCODE.md file using the Write tool. The file should be concise (under 100 lines) and include ONLY:
+2. Based on your analysis, write a NANOAGENT.md file using the Write tool. The file should be concise (under 100 lines) and include ONLY:
    - Common build, lint, test, and run commands (especially non-standard ones the AI wouldn't guess)
    - Key architectural patterns and conventions
    - Code style rules that differ from language defaults
@@ -266,12 +266,12 @@ Do the following:
    - Generic advice that applies to all projects
    - Long explanations — keep it terse, each rule on one line
 
-If NANOCODE.md or CLAUDE.md already exists, read it first, then ask the user if they want to overwrite or merge.
+If NANOAGENT.md or CLAUDE.md already exists, read it first, then ask the user if they want to overwrite or merge.
 `
 
 const initCommand: SlashCommand = {
   name: 'init',
-  description: 'Analyze codebase and generate NANOCODE.md',
+  description: 'Analyze codebase and generate NANOAGENT.md',
   async execute(_args, ctx) {
     ctx.sendPrompt(INIT_PROMPT)
   },

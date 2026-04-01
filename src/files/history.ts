@@ -1,5 +1,5 @@
 /**
- * NanoCode — File History State
+ * nanoagent — File History State
  *
  * Tracks file edits with versioned backups and snapshots.
  * Supports rewind-to-snapshot and diff stats between snapshots.
@@ -21,7 +21,7 @@ const MAX_SNAPSHOTS = 100
  * Base directory for file history backups.
  */
 function historyDir(sessionId: string): string {
-  return path.join(os.homedir(), '.nanocode', 'file-history', sessionId)
+  return path.join(os.homedir(), '.nanoagent', 'file-history', sessionId)
 }
 
 /**
@@ -69,7 +69,7 @@ export function createFileHistoryState(): FileHistoryState {
  * Track an edit to a file: backup the current content before modification.
  *
  * - Generates a hash-based filename: sha256(filePath).slice(0,16) + "@v" + version
- * - Stores backup under ~/.nanocode/file-history/{sessionId}/
+ * - Stores backup under ~/.nanoagent/file-history/{sessionId}/
  * - Only creates a backup if the file is not already backed up in the latest snapshot
  *   at the same version.
  *

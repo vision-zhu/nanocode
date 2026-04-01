@@ -35,7 +35,7 @@ function atomicWriteFileSync(filePath: string, content: string): void {
   const dir = dirname(filePath)
   mkdirSync(dir, { recursive: true })
 
-  const tempPath = join(dir, `.nanocode-tmp-${randomUUID()}`)
+  const tempPath = join(dir, `.nanoagent-tmp-${randomUUID()}`)
   try {
     writeFileSync(tempPath, content, 'utf-8')
     renameSync(tempPath, filePath)

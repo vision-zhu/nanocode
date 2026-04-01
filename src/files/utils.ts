@@ -1,5 +1,5 @@
 /**
- * NanoCode — File Utilities
+ * nanoagent — File Utilities
  *
  * Common file-system helpers: path normalization, encoding detection,
  * binary detection, line formatting, and project boundary checks.

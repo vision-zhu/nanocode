@@ -119,7 +119,7 @@ function atomicWriteFileSync(filePath: string, content: string): void {
   mkdirSync(dir, { recursive: true })
 
   // Write to temp file in same directory (for same-filesystem rename)
-  const tempPath = join(dir, `.nanocode-tmp-${randomUUID()}`)
+  const tempPath = join(dir, `.nanoagent-tmp-${randomUUID()}`)
   try {
     writeFileSync(tempPath, content, 'utf-8')
     renameSync(tempPath, filePath)

@@ -1,4 +1,4 @@
-# NanoCode Agent Guide
+# NanoAgent Agent Guide
 
 ## Commands
 

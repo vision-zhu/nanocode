@@ -4,6 +4,6 @@ test/
 tsconfig.json
 vitest.config.ts
 .claude/
-.nanocode/
-NANOCODE.md
+.nanoagent/
+NANOAGENT.md
 PLAN.md

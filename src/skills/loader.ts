@@ -18,8 +18,8 @@ import type { SkillDefinition, SkillFrontmatter, SkillLoadResult } from './types
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Config dirs — .nanocode/ takes priority over .claude/ */
-const CONFIG_DIRS = ['.nanocode', '.claude'] as const
+/** Config dirs — .nanoagent/ takes priority over .claude/ */
+const CONFIG_DIRS = ['.nanoagent', '.claude'] as const
 const SKILL_DIR_NAMES = CONFIG_DIRS.map(d => `${d}/skills`)
 const SKILL_FILE_NAME = 'SKILL.md'
 
@@ -41,7 +41,7 @@ export async function loadAllSkills(cwd: string): Promise<SkillDefinition[]> {
   const seen = new Map<string, SkillLoadResult>()
   const home = homedir()
 
-  // 1. Walk from cwd upward, checking .nanocode/skills/ then .claude/skills/
+  // 1. Walk from cwd upward, checking .nanoagent/skills/ then .claude/skills/
   const searchDirs = getSearchDirs(cwd, home)
 
   for (const dir of searchDirs) {
@@ -57,7 +57,7 @@ export async function loadAllSkills(cwd: string): Promise<SkillDefinition[]> {
     }
   }
 
-  // 2. User-level skills (~/.nanocode/skills/ then ~/.claude/skills/)
+  // 2. User-level skills (~/.nanoagent/skills/ then ~/.claude/skills/)
   for (const skillDirName of SKILL_DIR_NAMES) {
     const userSkillsDir = join(home, skillDirName)
     const userResults = await loadSkillsFromDir(userSkillsDir, 'user')
@@ -295,9 +295,9 @@ function createPromptExpander(
   return async (args: string): Promise<string> => {
     let result = template
 
-    // Replace ${NANOCODE_SKILL_DIR} / ${CLAUDE_SKILL_DIR} (both supported)
-    result = result.replace(/\$\{NANOCODE_SKILL_DIR\}/g, skillRoot)
-    result = result.replace(/\$NANOCODE_SKILL_DIR\b/g, skillRoot)
+    // Replace ${NANOAGENT_SKILL_DIR} / ${CLAUDE_SKILL_DIR} (both supported)
+    result = result.replace(/\$\{NANOAGENT_SKILL_DIR\}/g, skillRoot)
+    result = result.replace(/\$NANOAGENT_SKILL_DIR\b/g, skillRoot)
     result = result.replace(/\$\{CLAUDE_SKILL_DIR\}/g, skillRoot)
     result = result.replace(/\$CLAUDE_SKILL_DIR\b/g, skillRoot)
 

@@ -1,51 +1,51 @@
 <div align="center">
-  <h1>nanocode — Lightweight Claude Code Alternative</h1>
+  <h1>nanoagent — Lightweight Claude Code Alternative</h1>
   <p>
-    <a href="https://www.npmjs.com/package/nanocode-cli"><img src="https://img.shields.io/npm/v/nanocode-cli" alt="npm"></a>
+    <a href="https://www.npmjs.com/package/nanoagent-cli"><img src="https://img.shields.io/npm/v/nanoagent-cli" alt="npm"></a>
     <img src="https://img.shields.io/badge/lines-~9K_LOC-blue" alt="Lines">
     <img src="https://img.shields.io/badge/node-≥18-green" alt="Node">
     <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
-    <a href="https://deepwiki.com/Lyt060814/nanocode"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+    <a href="https://deepwiki.com/Lyt060814/nanoagent"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
   </p>
 </div>
 
-**nanocode** is an ultra-lightweight reimplementation of [Claude Code](https://github.com/anthropics/claude-code) — Anthropic's official CLI agent — built from scratch by studying the [decompiled source](https://github.com/sanbuphy/claude-code-source-code) of `@anthropic-ai/claude-code` v2.1.88.
+**nanoagent** is an ultra-lightweight reimplementation of [Claude Code](https://github.com/anthropics/claude-code) — Anthropic's official CLI agent — built from scratch by studying the [decompiled source](https://github.com/sanbuphy/claude-code-source-code) of `@anthropic-ai/claude-code` v2.1.88.
 
 ⚡ **~9,000 lines of code** (14K total with comments · 1.8% of Claude Code's ~512K) while retaining **~85-90% of agent capability**.
 
-> **Disclaimer**: This project is for **educational, research, and technical exchange purposes only**. All architectural insights are derived from the publicly available npm package. **Commercial use is strictly prohibited.** nanocode is not affiliated with Anthropic. If any content infringes upon rights, please contact us for immediate removal.
+> **Disclaimer**: This project is for **educational, research, and technical exchange purposes only**. All architectural insights are derived from the publicly available npm package. **Commercial use is strictly prohibited.** nanoagent is not affiliated with Anthropic. If any content infringes upon rights, please contact us for immediate removal.
 
 <div align="center">
-  <img src="assets/NANOCODE.png" alt="nanocode Screenshot" width="800">
+  <img src="assets/NANOAGENT.png" alt="nanoagent Screenshot" width="800">
 </div>
 
 ---
 
 ## News
 
-- **2026-04-01** 🚀 **nanocode v0.1.0 released!** — 9K LOC, 15 tools, 16 slash commands. `npm i -g nanocode-cli` and start coding!
+- **2026-04-01** 🚀 **nanoagent v0.1.0 released!** — 9K LOC, 15 tools, 16 slash commands. `npm i -g nanoagent-cli` and start coding!
 
-- **2026-03-31** 💥💥💥 **Claude Code source leaked!** — The full TypeScript source of `@anthropic-ai/claude-code` v2.1.88 (~512K lines) was [extracted and published](https://github.com/instructkr/claw-code) from the npm package. nanocode is built from the insights gained.
+- **2026-03-31** 💥💥💥 **Claude Code source leaked!** — The full TypeScript source of `@anthropic-ai/claude-code` v2.1.88 (~512K lines) was [extracted and published](https://github.com/instructkr/claw-code) from the npm package. nanoagent is built from the insights gained.
 
 ---
 
-## Why nanocode?
+## Why nanoagent?
 
 Claude Code is a remarkable piece of engineering — but at 512K lines, 12MB bundled, with React/Ink UI, telemetry, bridge layers, plugin marketplace, and 90+ slash commands, it's hard to study the **core patterns that actually make the agent work**.
 
-nanocode extracts the **20 critical engineering decisions** that drive agent performance and implements them in clean, readable TypeScript:
+nanoagent extracts the **20 critical engineering decisions** that drive agent performance and implements them in clean, readable TypeScript:
 
 <p align="center">
-<img src="assets/pipeline.png" alt="nanocode Pipeline" width="700">
+<img src="assets/pipeline.png" alt="nanoagent Pipeline" width="700">
 </p>
 
-Remove any one of these and overall performance degrades. nanocode keeps them all.
+Remove any one of these and overall performance degrades. nanoagent keeps them all.
 
 ---
 
-## Claude Code vs nanocode
+## Claude Code vs nanoagent
 
-| | Claude Code v2.1.88 | nanocode v0.1.0 |
+| | Claude Code v2.1.88 | nanoagent v0.1.0 |
 |---|---|---|
 | **Lines of code** | ~512,000 | ~9,000 (1.8%) |
 | **Bundle size** | 12MB | ~200KB |
@@ -60,7 +60,7 @@ Remove any one of these and overall performance degrades. nanocode keeps them al
 | **Sub-agents** | ✅ 5 modes | ✅ 3 modes (sync/async/explore) |
 | **Skills system** | ✅ frontmatter + fork/inline | ✅ frontmatter + fork/inline |
 | **MCP protocol** | ✅ stdio/SSE/WS | ✅ stdio |
-| **CLAUDE.md / NANOCODE.md** | ✅ hierarchical loading | ✅ hierarchical loading |
+| **CLAUDE.md / NANOAGENT.md** | ✅ hierarchical loading | ✅ hierarchical loading |
 | **Permission system** | ✅ allow/deny/ask + 4 modes | ✅ allow/deny/ask + 4 modes |
 | **Extended thinking** | ✅ | ✅ |
 | **Plan mode** | ✅ | ✅ |
@@ -82,12 +82,12 @@ Remove any one of these and overall performance degrades. nanocode keeps them al
 ### Install
 
 ```bash
-npm install -g nanocode-cli
+npm install -g nanoagent-cli
 ```
 
 ### Configure
 
-nanocode works with the Anthropic API or any OpenAI-compatible provider (OpenRouter, etc.):
+nanoagent works with the Anthropic API or any OpenAI-compatible provider (OpenRouter, etc.):
 
 ```bash
 # Anthropic direct
@@ -102,15 +102,15 @@ export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
 
 ```bash
 # Interactive REPL
-nanocode
+nanoagent
 
 # One-shot mode
-nanocode -p "fix the bug in auth.ts"
+nanoagent -p "fix the bug in auth.ts"
 
 # With options
-nanocode --model opus --thinking
-nanocode --dangerously-skip-permissions -p "run all tests"
-nanocode --resume <session-id>
+nanoagent --model opus --thinking
+nanoagent --dangerously-skip-permissions -p "run all tests"
+nanoagent --resume <session-id>
 ```
 
 ---
@@ -132,7 +132,7 @@ nanocode --resume <session-id>
 | **Todo** | In-memory task tracking |
 | **WebFetch** | HTTP fetch with HTML→markdown conversion |
 | **WebSearch** | Web search integration |
-| **Skill** | Skill invocation from `.nanocode/skills/` |
+| **Skill** | Skill invocation from `.nanoagent/skills/` |
 | **EnterPlanMode** | Switch to read-only planning |
 | **ExitPlanMode** | Return to full execution |
 | **NotebookEdit** | Jupyter notebook cell editing |
@@ -147,14 +147,14 @@ nanocode --resume <session-id>
 /cost        Show token usage and cost
 /resume      Resume a previous session
 /plan        Toggle plan mode (read-only)
-/memory      Show NANOCODE.md / CLAUDE.md content
+/memory      Show NANOAGENT.md / CLAUDE.md content
 /config      Show current configuration
 /status      Show session status
 /skills      List available skills
 /context     Show context window usage
-/init        Analyze codebase and generate NANOCODE.md
+/init        Analyze codebase and generate NANOAGENT.md
 /mcp         Show MCP server configuration
-/exit        Exit nanocode (also: /quit)
+/exit        Exit nanoagent (also: /quit)
 ```
 
 ### Context Engineering
@@ -166,13 +166,13 @@ nanocode --resume <session-id>
 
 ### Session Persistence
 
-- Sessions stored as JSONL in `~/.nanocode/sessions/`
+- Sessions stored as JSONL in `~/.nanoagent/sessions/`
 - Resume with `/resume` or `--resume <id>`
 - Messages persisted as they're created (lazy session initialization — no empty sessions)
 
 ### Skills System
 
-Place skills in `.nanocode/skills/` or `.claude/skills/`:
+Place skills in `.nanoagent/skills/` or `.claude/skills/`:
 
 ```markdown
 ---
@@ -187,7 +187,7 @@ Your skill prompt here. $ARGUMENTS will be replaced.
 
 ### MCP Support
 
-Configure MCP servers in `.nanocode/settings.json`:
+Configure MCP servers in `.nanoagent/settings.json`:
 
 ```json
 {
@@ -209,15 +209,15 @@ Configure MCP servers in `.nanocode/settings.json`:
 
 ## Configuration
 
-nanocode supports both `.nanocode/` and `.claude/` config directories (`.nanocode/` takes priority):
+nanoagent supports both `.nanoagent/` and `.claude/` config directories (`.nanoagent/` takes priority):
 
 | File | Purpose |
 |------|---------|
-| `NANOCODE.md` / `CLAUDE.md` | Project instructions (loaded into system prompt) |
-| `.nanocode/settings.json` | Permissions, MCP servers |
-| `.nanocode/skills/` | Custom skills |
-| `.nanocode/rules/*.md` | Conditional rules |
-| `NANOCODE.local.md` | Personal instructions (gitignored) |
+| `NANOAGENT.md` / `CLAUDE.md` | Project instructions (loaded into system prompt) |
+| `.nanoagent/settings.json` | Permissions, MCP servers |
+| `.nanoagent/skills/` | Custom skills |
+| `.nanoagent/rules/*.md` | Conditional rules |
+| `NANOAGENT.local.md` | Personal instructions (gitignored) |
 
 Hierarchical loading: walks from cwd up to filesystem root, merging all found files.
 
@@ -226,7 +226,7 @@ Hierarchical loading: walks from cwd up to filesystem root, merging all found fi
 ## Architecture
 
 ```
-nanocode/src/          9,147 LOC (14,317 total) across 55 files
+nanoagent/src/          9,147 LOC (14,317 total) across 55 files
 ├── cli.ts             CLI entry + REPL (readline, suggestions, multi-line)
 ├── headless.ts        SDK/programmatic mode
 ├── core/              Agent loop, API client, streaming executor, errors, types
@@ -244,7 +244,7 @@ nanocode/src/          9,147 LOC (14,317 total) across 55 files
 ### The Core Loop
 
 <p align="center">
-  <img src="assets/architecture.png" alt="nanocode Architecture" width="700">
+  <img src="assets/architecture.png" alt="nanoagent Architecture" width="700">
 </p>
 
 ---
@@ -252,8 +252,8 @@ nanocode/src/          9,147 LOC (14,317 total) across 55 files
 ## Development
 
 ```bash
-git clone https://github.com/anthropics/nanocode.git
-cd nanocode
+git clone https://github.com/anthropics/nanoagent.git
+cd nanoagent
 npm install
 npm run build       # compile TypeScript
 npm run dev         # watch mode
@@ -278,7 +278,7 @@ PRs welcome! The codebase is intentionally small and readable.
 - [ ] **Web UI** — Browser-based interface alongside the terminal REPL
 - [ ] **i18n** — Multilingual system prompts and UI
 
-Pick an item and open a PR — or suggest new ideas in [Issues](https://github.com/anthropics/nanocode/issues).
+Pick an item and open a PR — or suggest new ideas in [Issues](https://github.com/anthropics/nanoagent/issues).
 
 ---
 
@@ -286,11 +286,11 @@ Pick an item and open a PR — or suggest new ideas in [Issues](https://github.c
 
 MIT License — see [LICENSE](LICENSE).
 
-This project is for **educational and research purposes only**. Commercial use is prohibited. nanocode is not affiliated with or endorsed by Anthropic.
+This project is for **educational and research purposes only**. Commercial use is prohibited. nanoagent is not affiliated with or endorsed by Anthropic.
 
 ---
 
 <p align="center">
-  <em> Thanks for visiting ✨ nanocode!</em><br><br>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=Lyt060814.nanocode&style=for-the-badge&color=00d4ff" alt="Views">
+  <em> Thanks for visiting ✨ nanoagent!</em><br><br>
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=Lyt060814.nanoagent&style=for-the-badge&color=00d4ff" alt="Views">
 </p>

@@ -19,9 +19,9 @@ let sessionId: string
 let historyBase: string
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), 'nanocode-history-test-'))
+  tempDir = mkdtempSync(join(tmpdir(), 'nanoagent-history-test-'))
   sessionId = `test-session-${Date.now()}-${Math.random().toString(36).slice(2)}`
-  historyBase = join(homedir(), '.nanocode', 'file-history', sessionId)
+  historyBase = join(homedir(), '.nanoagent', 'file-history', sessionId)
 })
 
 afterEach(() => {

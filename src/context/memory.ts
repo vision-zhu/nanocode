@@ -1,5 +1,5 @@
 /**
- * NanoCode Memory (CLAUDE.md) Loader
+ * nanoagent Memory (CLAUDE.md) Loader
  *
  * Loads project and user-level CLAUDE.md memory files.
  *
@@ -27,15 +27,15 @@ import { homedir } from 'node:os'
 /** Maximum depth for @include directive resolution. */
 const MAX_INCLUDE_DEPTH = 5
 
-/** Config directory names — .nanocode/ takes priority over .claude/ */
-const CONFIG_DIRS = ['.nanocode', '.claude'] as const
+/** Config directory names — .nanoagent/ takes priority over .claude/ */
+const CONFIG_DIRS = ['.nanoagent', '.claude'] as const
 
-/** Files to check at each directory level (NANOCODE.md first, then CLAUDE.md). */
+/** Files to check at each directory level (NANOAGENT.md first, then CLAUDE.md). */
 const MEMORY_FILES = [
-  'NANOCODE.md',
+  'NANOAGENT.md',
   'CLAUDE.md',
-  ...CONFIG_DIRS.flatMap(d => [`${d}/NANOCODE.md`, `${d}/CLAUDE.md`]),
-  'NANOCODE.local.md',
+  ...CONFIG_DIRS.flatMap(d => [`${d}/NANOAGENT.md`, `${d}/CLAUDE.md`]),
+  'NANOAGENT.local.md',
   'CLAUDE.local.md',
 ] as const
 
@@ -188,7 +188,7 @@ async function collectFromDirectory(dir: string): Promise<MemoryFragment[]> {
     }
   }
 
-  // Check rules directories (.nanocode/rules/ then .claude/rules/)
+  // Check rules directories (.nanoagent/rules/ then .claude/rules/)
   for (const rulesRel of RULES_DIRS) {
     const rulesDir = join(dir, rulesRel)
     if (await isDirectory(rulesDir)) {
@@ -237,9 +237,9 @@ export async function loadClaudeMd(cwd: string): Promise<string> {
     }
   }
 
-  // Check user-level memory files (.nanocode/ first, then .claude/; NANOCODE.md first, then CLAUDE.md)
+  // Check user-level memory files (.nanoagent/ first, then .claude/; NANOAGENT.md first, then CLAUDE.md)
   for (const configDir of CONFIG_DIRS) {
-    for (const mdName of ['NANOCODE.md', 'CLAUDE.md']) {
+    for (const mdName of ['NANOAGENT.md', 'CLAUDE.md']) {
       const userMd = join(homedir(), configDir, mdName)
       if (!seenSources.has(userMd)) {
         const content = await tryRead(userMd)

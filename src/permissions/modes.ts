@@ -1,5 +1,5 @@
 /**
- * NanoCode — Permission Mode Utilities
+ * nanoagent — Permission Mode Utilities
  *
  * Human-readable descriptions and restriction metadata for each
  * permission mode.

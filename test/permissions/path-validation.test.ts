@@ -9,7 +9,7 @@ import * as os from 'node:os'
 let tmpDir: string
 
 beforeEach(async () => {
-  const base = path.join(os.homedir(), '.nanocode-test-tmp')
+  const base = path.join(os.homedir(), '.nanoagent-test-tmp')
   await fs.mkdir(base, { recursive: true })
   tmpDir = await fs.mkdtemp(path.join(base, 'path-test-'))
 })

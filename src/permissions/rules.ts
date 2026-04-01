@@ -1,5 +1,5 @@
 /**
- * NanoCode — Permission Rules
+ * nanoagent — Permission Rules
  *
  * Loads permission rules from project and user settings files,
  * and implements rule matching against tool invocations.
@@ -83,12 +83,12 @@ function extractRules(
   return rules
 }
 
-/** Config dirs — .nanocode/ takes priority over .claude/ */
-const CONFIG_DIRS = ['.nanocode', '.claude'] as const
+/** Config dirs — .nanoagent/ takes priority over .claude/ */
+const CONFIG_DIRS = ['.nanoagent', '.claude'] as const
 
 /**
  * Load permission rules from the project's settings.
- * Checks .nanocode/settings.json first, then .claude/settings.json.
+ * Checks .nanoagent/settings.json first, then .claude/settings.json.
  */
 export async function loadProjectRules(cwd: string): Promise<PermissionRule[]> {
   const rules: PermissionRule[] = []
@@ -102,7 +102,7 @@ export async function loadProjectRules(cwd: string): Promise<PermissionRule[]> {
 
 /**
  * Load permission rules from the user's settings.
- * Checks ~/.nanocode/settings.json first, then ~/.claude/settings.json.
+ * Checks ~/.nanoagent/settings.json first, then ~/.claude/settings.json.
  */
 export async function loadUserRules(): Promise<PermissionRule[]> {
   const rules: PermissionRule[] = []

@@ -1,11 +1,11 @@
 {
-  "name": "nanocode-cli",
+  "name": "nanoagent-cli",
   "version": "0.1.0",
   "description": "Lightweight AI coding agent for the terminal — powered by Claude",
   "type": "module",
   "main": "dist/headless.js",
   "bin": {
-    "nanocode": "dist/cli.js"
+    "nanoagent": "dist/cli.js"
   },
   "files": [
     "dist",

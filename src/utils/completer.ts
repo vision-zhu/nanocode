@@ -1,5 +1,5 @@
 /**
- * NanoCode — REPL Autocomplete
+ * nanoagent — REPL Autocomplete
  *
  * Provides slash command (/) and file mention (@) completion for readline.
  * Uses ANSI escape codes to render an inline suggestion list below the prompt.

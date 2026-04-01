@@ -26,7 +26,7 @@ function gitCommit(dir: string, msg: string): void {
 }
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), 'nanocode-git-test-'))
+  tempDir = mkdtempSync(join(tmpdir(), 'nanoagent-git-test-'))
   clearGitCache()
 })
 

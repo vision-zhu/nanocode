@@ -1,11 +1,11 @@
 /**
- * NanoCode Headless / SDK Mode
+ * nanoagent Headless / SDK Mode
  *
- * Programmatic interface to NanoCode — no terminal UI, pure async generator.
- * Use this to embed NanoCode in other applications.
+ * Programmatic interface to nanoagent — no terminal UI, pure async generator.
+ * Use this to embed nanoagent in other applications.
  *
  * Usage:
- *   import { createAgent } from 'nanocode/headless'
+ *   import { createAgent } from 'nanoagent/headless'
  *   const agent = createAgent({ apiKey, model: 'sonnet' })
  *   for await (const event of agent.query('Fix the bug in auth.ts')) {
  *     if (event.type === 'assistant_text') process.stdout.write(event.text)

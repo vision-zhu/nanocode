@@ -19,7 +19,7 @@ import { atomicWrite } from '../../src/files/atomic-write'
 let tempDir: string
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), 'nanocode-atomic-test-'))
+  tempDir = mkdtempSync(join(tmpdir(), 'nanoagent-atomic-test-'))
 })
 
 afterEach(() => {

@@ -291,7 +291,7 @@ export class McpClient {
         protocolVersion: MCP_PROTOCOL_VERSION,
         capabilities: {},
         clientInfo: {
-          name: 'nanocode',
+          name: 'nanoagent',
           version: '0.1.0',
         },
       },

@@ -1,5 +1,5 @@
 /**
- * NanoCode — ANSI Formatting Utilities
+ * nanoagent — ANSI Formatting Utilities
  *
  * Terminal color helpers, tool result formatting, thinking display,
  * cost display, and unified diff with color.
@@ -15,7 +15,7 @@ const ESC = '\x1b['
 const RESET = `${ESC}0m`
 
 // ---------------------------------------------------------------------------
-// NanoCode Brand Colors (RGB)
+// nanoagent Brand Colors (RGB)
 //   Primary:  soft blue  rgb(100,149,237) — text, highlights, suggestions
 //   Accent:   warm gold  rgb(230,190,80)  — spinner, icons, accents
 // ---------------------------------------------------------------------------
@@ -165,36 +165,34 @@ export function gradientBlock(lines: string[], from: [number, number, number], t
   }).join('\n')
 }
 
-// NanoCode brand gradient: blue → gold
+// nanoagent brand gradient: blue → gold
 const GRADIENT_FROM: [number, number, number] = [100, 149, 237] // soft blue
 const GRADIENT_TO: [number, number, number] = [230, 190, 80]   // warm gold
 
-// ASCII art logo — Gemini-style, "nanocode" in 6 lines
+// ASCII art logo — "NANOAGENT" in figlet big font style
 const LOGO_LARGE = [
-  ' ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗  ██████╗ ██████╗ ██████╗ ███████╗',
-  ' ████╗  ██║██╔══██╗████╗  ██║██╔═══██╗██╔════╝██╔═══██╗██╔══██╗██╔════╝',
-  ' ██╔██╗ ██║███████║██╔██╗ ██║██║   ██║██║     ██║   ██║██║  ██║█████╗  ',
-  ' ██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██║     ██║   ██║██║  ██║██╔══╝  ',
-  ' ██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝╚██████╗╚██████╔╝██████╔╝███████╗',
-  ' ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝',
+  '_   _          _   _  ____          _____ ______ _   _ _______ ',
+  '| \\ | |   /\\   | \\ | |/ __ \\   /\\   / ____|  ____| \\ | |__   __|',
+  '|  \\| |  /  \\  |  \\| | |  | | /  \\ | |  __| |__  |  \\| |  | |   ',
+  '| . ` | / /\\ \\ | . ` | |  | |/ /\\ \\| | |_ |  __| | . ` |  | |   ',
+  '| |\\  |/ ____ \\| |\\  | |__| / ____ \\ |__| | |____| |\\  |  | |   ',
+  '|_| \\_/_/    \\_\\_| \\_|\\____/_/    \\_\\_____|______|_| \\_|  |_|   ',
 ]
 
-// Medium version for narrower terminals
+// Medium version for narrower terminals (figlet small font)
 const LOGO_MEDIUM = [
-  ' ██╗ ██╗████╗ ██╗ ██╗████╗ ████╗ ████╗ ████╗ █████╗',
-  ' ███╗██║█╔═█╗███╗██║█╔══█╗█╔══╝█╔═█╗█╔═█╗█╔══╝',
-  ' █╔██║████║█╔██║█║ █║█║   █║ █║█║ █║███╗ ',
-  ' █║╚█║█╔═█║█║╚█║█║ █║█║   █║ █║█║ █║█╔═╝ ',
-  ' █║ ╚║█║ █║█║ ╚║╚███╔╝╚███╗╚███╔╝███╔╝████╗',
-  ' ╚╝  ╝╚╝ ╚╝╚╝  ╝ ╚══╝  ╚══╝ ╚══╝ ╚══╝ ╚═══╝',
+  ' _  _   _   _  _  ___   _   ___ ___ _  _ _____ ',
+  '| \\| | /_\\ | \\| |/ _ \\ /_\\ / __| __| \\| |_   _|',
+  '| .` |/ _ \\| .` | (_) / _ \\ (_ | _|| .` | | |  ',
+  '|_|\\_/_/ \\_\\_|\\_|\\___/_/ \\_\\___|___|_|\\_| |_|  ',
 ]
 
 /**
- * Render the NanoCode gradient logo.
+ * Render the nanoagent gradient logo.
  */
 export function renderLogo(): string {
   const width = process.stdout.columns || 80
-  const logo = width >= 72 ? LOGO_LARGE : LOGO_MEDIUM
+  const logo = width >= 65 ? LOGO_LARGE : LOGO_MEDIUM
   return gradientBlock(logo, GRADIENT_FROM, GRADIENT_TO)
 }
 

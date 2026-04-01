@@ -111,7 +111,7 @@ function skillNotFoundMessage(requested: string): string {
   if (!available) {
     return (
       `Skill "${requested}" not found. No skills are currently loaded.\n` +
-      `Skills are loaded from .nanocode/skills/ or .claude/skills/ directories.`
+      `Skills are loaded from .nanoagent/skills/ or .claude/skills/ directories.`
     )
   }
 
@@ -223,7 +223,7 @@ export const skillToolDef: ToolDef<SkillInput> = {
 
   description:
     'Invoke a loaded skill by name. Skills are reusable prompt templates ' +
-    'loaded from .nanocode/skills/ or .claude/skills/ directories. Use this tool when a task ' +
+    'loaded from .nanoagent/skills/ or .claude/skills/ directories. Use this tool when a task ' +
     'matches a loaded skill\'s purpose. Pass the skill name and any arguments.',
 
   inputSchema: skillInputSchema,

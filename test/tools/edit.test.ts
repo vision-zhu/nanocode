@@ -54,7 +54,7 @@ function writeAndCache(
 }
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), 'nanocode-edit-test-'))
+  tempDir = mkdtempSync(join(tmpdir(), 'nanoagent-edit-test-'))
 })
 
 afterEach(() => {

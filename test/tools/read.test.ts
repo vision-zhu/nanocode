@@ -38,7 +38,7 @@ function makeContext(cwd?: string): ToolContext {
 }
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), 'nanocode-read-test-'))
+  tempDir = mkdtempSync(join(tmpdir(), 'nanoagent-read-test-'))
 })
 
 afterEach(() => {
