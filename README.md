@@ -2,7 +2,7 @@
   <h1>nanocode — Lightweight Claude Code Alternative</h1>
   <p>
     <a href="https://www.npmjs.com/package/nanocode-cli"><img src="https://img.shields.io/npm/v/nanocode-cli" alt="npm"></a>
-    <img src="https://img.shields.io/badge/lines-~15K-blue" alt="Lines">
+    <img src="https://img.shields.io/badge/lines-~9K_LOC-blue" alt="Lines">
     <img src="https://img.shields.io/badge/node-≥18-green" alt="Node">
     <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
     <a href="https://deepwiki.com/Lyt060814/nanocode"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
@@ -11,7 +11,7 @@
 
 **nanocode** is an ultra-lightweight reimplementation of [Claude Code](https://github.com/anthropics/claude-code) — Anthropic's official CLI agent — built from scratch by studying the [decompiled source](https://github.com/sanbuphy/claude-code-source-code) of `@anthropic-ai/claude-code` v2.1.88.
 
-⚡ **~15,000 lines of TypeScript** (3% of Claude Code's ~512K) while retaining **~85-90% of agent capability**.
+⚡ **~9,000 lines of code** (14K total with comments · 1.8% of Claude Code's ~512K) while retaining **~85-90% of agent capability**.
 
 > **Disclaimer**: This project is for **educational, research, and technical exchange purposes only**. All architectural insights are derived from the publicly available npm package. **Commercial use is strictly prohibited.** nanocode is not affiliated with Anthropic. If any content infringes upon rights, please contact us for immediate removal.
 
@@ -23,7 +23,7 @@
 
 ## News
 
-- **2026-04-01** 🚀 **nanocode v0.1.0 released!** — 15K lines, 15 tools, 16 slash commands. `npm i -g nanocode-cli` and start coding! 
+- **2026-04-01** 🚀 **nanocode v0.1.0 released!** — 9K LOC, 15 tools, 16 slash commands. `npm i -g nanocode-cli` and start coding!
 
 - **2026-03-31** 💥💥💥 **Claude Code source leaked!** — The full TypeScript source of `@anthropic-ai/claude-code` v2.1.88 (~512K lines) was [extracted and published](https://github.com/instructkr/claw-code) from the npm package. nanocode is built from the insights gained.
 
@@ -47,7 +47,7 @@ Remove any one of these and overall performance degrades. nanocode keeps them al
 
 | | Claude Code v2.1.88 | nanocode v0.1.0 |
 |---|---|---|
-| **Source lines** | ~512,000 | ~15,000 (3%) |
+| **Lines of code** | ~512,000 | ~9,000 (1.8%) |
 | **Bundle size** | 12MB | ~200KB |
 | **Tools** | 45+ | 15 |
 | **Slash commands** | 90+ | 16 |
@@ -226,7 +226,7 @@ Hierarchical loading: walks from cwd up to filesystem root, merging all found fi
 ## Architecture
 
 ```
-nanocode/src/          14,317 lines across 55 files
+nanocode/src/          9,147 LOC (14,317 total) across 55 files
 ├── cli.ts             CLI entry + REPL (readline, suggestions, multi-line)
 ├── headless.ts        SDK/programmatic mode
 ├── core/              Agent loop, API client, streaming executor, errors, types
@@ -291,5 +291,5 @@ This project is for **educational and research purposes only**. Commercial use i
 ---
 
 <p align="center">
-  <sub>Built by studying Claude Code v2.1.88 · 3% of the code, ~90% of the capability</sub>
+  <sub>Built by studying Claude Code v2.1.88 · 1.8% of the code, ~90% of the capability</sub>
 </p>
