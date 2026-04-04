@@ -116,9 +116,11 @@ const planCommand: SlashCommand = {
   async execute(_args, ctx) {
     if (ctx.permissionMode === 'plan') {
       ctx.setPermissionMode('default')
+      ctx.sendPrompt('[System: Plan mode disabled. You now have access to all tools including Edit and Write.]')
       return 'Plan mode disabled. All tools available.'
     }
     ctx.setPermissionMode('plan')
+    ctx.sendPrompt('[System: Plan mode enabled. You can ONLY use read-only tools (Read, Glob, Grep, WebFetch, WebSearch, Todo, and read-only Bash commands). You CANNOT use Edit, Write, NotebookEdit, or non-read-only Bash commands. Use /plan again to exit plan mode when ready to implement changes.]')
     return yellow('Plan mode enabled.') + ' Only read-only tools available.'
   },
 }

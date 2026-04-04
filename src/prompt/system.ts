@@ -193,6 +193,23 @@ restate the entire file contents unless asked.
 any key decisions or findings. Do not enumerate every step you took unless \
 the user asked for a detailed walkthrough.`
 
+const PLAN_MODE = `\
+## Plan Mode
+
+When in plan mode, you can ONLY use read-only tools:
+- Read, Glob, Grep — file reading and search
+- Bash (read-only commands like ls, cat, git log)
+- WebFetch, WebSearch — information gathering
+- Todo — task tracking (memory only)
+
+You CANNOT use:
+- Edit, Write, NotebookEdit — file modifications
+- Bash (write commands like rm, mv, git commit)
+- Agent — sub-agent spawning
+
+Use plan mode to gather information and plan your approach. Exit plan mode \
+with ExitPlanMode when ready to implement changes.`
+
 // ---------------------------------------------------------------------------
 // Assemble the full static section
 // ---------------------------------------------------------------------------
@@ -209,6 +226,8 @@ const STATIC_SYSTEM_PROMPT = [
   USING_TOOLS,
   '',
   TONE_AND_STYLE,
+  '',
+  PLAN_MODE,
 ].join('\n\n')
 
 // ---------------------------------------------------------------------------

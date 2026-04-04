@@ -208,7 +208,7 @@ export const todoToolDef: ToolDef<TodoInput> = {
     ].join('\n')
   },
 
-  isReadOnly: () => false, // Modifies in-memory state
+  isReadOnly: () => true, // Only modifies in-memory state, safe for plan mode
   isConcurrencySafe: () => false,
   maxResultSizeChars: 10_000,
 
