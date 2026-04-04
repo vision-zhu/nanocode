@@ -261,8 +261,10 @@ describe('withRetry', () => {
   it('respects maxRetries and throws after exhausting attempts', async () => {
     const fn = vi.fn().mockRejectedValue(new NetworkError('fail'))
     const promise = withRetry(fn, { maxRetries: 2, initialDelayMs: 10 })
+    // Set up the rejection handler before running timers
+    const rejectionPromise = expect(promise).rejects.toThrow(NetworkError)
     await vi.runAllTimersAsync()
-    await expect(promise).rejects.toThrow(NetworkError)
+    await rejectionPromise
     // initial attempt + 2 retries = 3 calls
     expect(fn).toHaveBeenCalledTimes(3)
   })
@@ -301,8 +303,10 @@ describe('withRetry', () => {
   it('throws OverloadedError after 3 consecutive 529 errors', async () => {
     const fn = vi.fn().mockRejectedValue(new OverloadedError('overloaded'))
     const promise = withRetry(fn, { maxRetries: 10, initialDelayMs: 10 })
+    // Set up the rejection handler before running timers
+    const rejectionPromise = expect(promise).rejects.toThrow(OverloadedError)
     await vi.runAllTimersAsync()
-    await expect(promise).rejects.toThrow(OverloadedError)
+    await rejectionPromise
     // attempt 0 => 529 (consecutive529=1), attempt 1 => 529 (consecutive529=2), attempt 2 => 529 (consecutive529=3, throw)
     expect(fn).toHaveBeenCalledTimes(3)
   })

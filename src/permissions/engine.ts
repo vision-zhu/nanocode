@@ -13,6 +13,7 @@ import type {
 } from '../core/types.js'
 import { matchRule, loadProjectRules, loadUserRules } from './rules.js'
 import { getModeRestrictions } from './modes.js'
+import { isReadOnlyCommand } from '../tools/bash-readonly.js'
 
 // ---------------------------------------------------------------------------
 // Session rules (in-memory, per-session)
@@ -39,57 +40,6 @@ export function getSessionRules(): PermissionRule[] {
  */
 export function clearSessionRules(): void {
   sessionRules = []
-}
-
-// ---------------------------------------------------------------------------
-// Read-only command detection (for Bash tool)
-// ---------------------------------------------------------------------------
-
-const READ_ONLY_PREFIXES = [
-  'ls',
-  'cat',
-  'head',
-  'tail',
-  'wc',
-  'grep',
-  'rg',
-  'find',
-  'fd',
-  'which',
-  'whoami',
-  'pwd',
-  'echo',
-  'date',
-  'env',
-  'printenv',
-  'file',
-  'stat',
-  'du',
-  'df',
-  'uname',
-  'hostname',
-  'id',
-  'git log',
-  'git status',
-  'git diff',
-  'git show',
-  'git branch',
-  'git remote',
-  'git tag',
-  'git rev-parse',
-]
-
-/**
- * Check if a bash command is read-only (safe to run without user approval).
- */
-function isReadOnlyCommand(command: string): boolean {
-  const trimmed = command.trim()
-  return READ_ONLY_PREFIXES.some(
-    (prefix) =>
-      trimmed === prefix ||
-      trimmed.startsWith(prefix + ' ') ||
-      trimmed.startsWith(prefix + '\t'),
-  )
 }
 
 // ---------------------------------------------------------------------------

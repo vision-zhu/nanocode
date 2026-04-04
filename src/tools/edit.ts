@@ -12,7 +12,7 @@
  * Key patterns from Claude Code: edit.ts validation chain, atomic writes.
  */
 
-import { readFileSync, writeFileSync, statSync, existsSync, mkdirSync, renameSync } from 'node:fs'
+import { readFileSync, writeFileSync, statSync, existsSync, mkdirSync, renameSync, unlinkSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { tmpdir } from 'node:os'
@@ -126,7 +126,6 @@ function atomicWriteFileSync(filePath: string, content: string): void {
   } catch (err) {
     // Clean up temp file on failure
     try {
-      const { unlinkSync } = require('node:fs')
       unlinkSync(tempPath)
     } catch {
       // Ignore cleanup errors

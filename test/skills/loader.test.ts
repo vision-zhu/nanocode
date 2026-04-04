@@ -232,11 +232,14 @@ Body 1`)
     }
   })
 
-  it('returns empty array when no skills exist', async () => {
+  it('does not load skills from empty directory', async () => {
     const emptyDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nanocode-empty-'))
     try {
       const skills = await loadAllSkills(emptyDir)
-      expect(skills).toEqual([])
+      // loadAllSkills also checks user home directory, so we just verify
+      // that no skills are loaded from the empty temp directory
+      const skillsFromEmptyDir = skills.filter(s => s.skillRoot.startsWith(emptyDir))
+      expect(skillsFromEmptyDir).toEqual([])
     } finally {
       await fs.rm(emptyDir, { recursive: true, force: true })
     }

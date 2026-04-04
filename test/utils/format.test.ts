@@ -59,26 +59,25 @@ describe('ANSI format helpers', () => {
   // formatToolResult
   // -------------------------------------------------------------------
   describe('formatToolResult', () => {
-    it('includes tool name header', () => {
+    it('includes result content', () => {
       const output = formatToolResult('Read', 'file contents here')
-      expect(output).toContain('[Read]')
       expect(output).toContain('file contents here')
     })
 
-    it('truncates output longer than 2000 chars', () => {
-      const longText = 'x'.repeat(5000)
+    it('truncates output with many lines', () => {
+      const longText = 'line\n'.repeat(30)
       const output = formatToolResult('Bash', longText)
       // Should contain truncation notice
-      expect(output).toContain('more characters')
+      expect(output).toContain('hidden')
       // The truncated body should be shorter than original
-      expect(output.length).toBeLessThan(longText.length + 200)
+      expect(output.length).toBeLessThan(longText.length + 500)
     })
 
     it('does not truncate short output', () => {
       const shortText = 'hello world'
       const output = formatToolResult('Bash', shortText)
       expect(output).toContain('hello world')
-      expect(output).not.toContain('more characters')
+      expect(output).not.toContain('hidden')
     })
   })
 

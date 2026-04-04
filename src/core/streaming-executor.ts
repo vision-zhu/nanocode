@@ -132,7 +132,8 @@ async function* executeBatch(
   if (batch.isConcurrencySafe) {
     // Parallel execution with concurrency limit
     const items = batch.items
-    const executing: Promise<{ item: QueuedTool; result: ToolResult }>[] = []
+    // Track promises with their original items for proper resolution
+    const executing: Array<{ promise: Promise<{ item: QueuedTool; result: ToolResult }>; item: QueuedTool }> = []
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i]!
@@ -149,19 +150,21 @@ async function* executeBatch(
         item,
         result,
       }))
-      executing.push(promise)
+      executing.push({ promise, item })
 
       // If we've hit concurrency limit, wait for one to finish
       if (executing.length >= MAX_CONCURRENCY) {
-        const completed = await Promise.race(executing)
-        executing.splice(executing.indexOf(
-          executing.find((p) => p === Promise.resolve(completed)) || executing[0]!
-        ), 1)
+        const completed = await Promise.race(executing.map(e => e.promise))
+        // Remove the completed promise from the executing array
+        const completedIdx = executing.findIndex(e => e.item === completed.item)
+        if (completedIdx >= 0) {
+          executing.splice(completedIdx, 1)
+        }
       }
     }
 
     // Wait for all remaining
-    const results = await Promise.all(executing)
+    const results = await Promise.all(executing.map(e => e.promise))
 
     // Yield results in original order
     for (const item of items) {
