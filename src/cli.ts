@@ -186,6 +186,8 @@ function createPermissionHandler(
 let activeSpinner: SpinnerHandle | null = null
 let assistantTextBuffer = ''  // Buffer for markdown rendering
 let assistantTextStarted = false
+let thinkingBuffer = ''  // Buffer for thinking output
+let gEnableThinking = false  // Global flag to control thinking output display
 
 function stopSpinner(): void {
   if (activeSpinner) { activeSpinner.stop(); activeSpinner = null }
@@ -238,6 +240,11 @@ function displayEvent(event: StreamEvent, costTracker: CostTracker, modelConfig:
   switch (event.type) {
     case 'assistant_text':
       stopSpinner()
+      // Flush any remaining thinking buffer before text output
+      if (thinkingBuffer) {
+        process.stdout.write(formatThinking(thinkingBuffer))
+        thinkingBuffer = ''
+      }
       if (!assistantTextStarted) {
         assistantTextStarted = true
       }
@@ -247,8 +254,18 @@ function displayEvent(event: StreamEvent, costTracker: CostTracker, modelConfig:
       break
 
     case 'thinking':
-      stopSpinner()
-      process.stdout.write(formatThinking(event.text))
+      // Only display thinking output when explicitly enabled via --thinking flag
+      if (gEnableThinking) {
+        stopSpinner()
+        // Buffer thinking text and render on complete lines
+        thinkingBuffer += event.text
+        const lastNl = thinkingBuffer.lastIndexOf('\n')
+        if (lastNl !== -1) {
+          const complete = thinkingBuffer.slice(0, lastNl + 1)
+          thinkingBuffer = thinkingBuffer.slice(lastNl + 1)
+          process.stdout.write(formatThinking(complete))
+        }
+      }
       break
 
     case 'tool_start':
@@ -301,11 +318,21 @@ function displayEvent(event: StreamEvent, costTracker: CostTracker, modelConfig:
     case 'assistant_message':
       stopSpinner()
       flushAllAssistantText()
+      // Flush any remaining thinking buffer
+      if (thinkingBuffer) {
+        process.stdout.write(formatThinking(thinkingBuffer))
+        thinkingBuffer = ''
+      }
       break
 
     case 'turn_complete':
       stopSpinner()
       flushAllAssistantText()
+      // Flush any remaining thinking buffer
+      if (thinkingBuffer) {
+        process.stdout.write(formatThinking(thinkingBuffer))
+        thinkingBuffer = ''
+      }
       assistantTextStarted = false
       process.stdout.write('\n')
       break
@@ -544,6 +571,7 @@ async function main(): Promise<void> {
     ]
 
     startSpinner()
+    gEnableThinking = state.enableThinking
     await runAgent(messages, state, costTracker, readFileState, fileHistory, null)
     stopSpinner()
     console.log('\n' + costDivider(costTracker, modelConfig))
@@ -769,6 +797,7 @@ async function main(): Promise<void> {
     // Run agent with abort support
     // Start spinner while waiting for API
     startSpinner()
+    gEnableThinking = state.enableThinking
     currentAbort = new AbortController()
     messages = await runAgent(
       messages,
