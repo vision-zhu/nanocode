@@ -316,13 +316,15 @@ export function renderSuggestions(state: CompleterState): { output: string; line
     lines.push(dim(`  ↓ ${total - windowEnd} more`))
   }
 
+  // Save cursor, move to next line, clear to end of screen, output content, restore cursor
   const ansi =
-    '\x1b[s' + // Save cursor position
-    '\n' +
-    lines.join('\n') +
-    '\x1b[u' // Restore cursor position
+    '\x1b[s' +           // Save cursor position
+    '\x1b[1E' +          // Move to beginning of next line
+    '\x1b[J' +           // Clear from cursor to end of screen
+    lines.join('\n') +   // Output suggestion lines
+    '\x1b[u'             // Restore cursor position
 
-  return { output: ansi, lineCount: lines.length + 1 }
+  return { output: ansi, lineCount: lines.length }
 }
 
 /**
@@ -330,11 +332,6 @@ export function renderSuggestions(state: CompleterState): { output: string; line
  */
 export function clearRenderedSuggestions(lineCount: number): string {
   if (lineCount === 0) return ''
-  // Save pos, move down, clear lines, restore pos
-  let ansi = '\x1b[s' // save
-  for (let i = 0; i < lineCount; i++) {
-    ansi += '\n\x1b[2K' // next line + clear
-  }
-  ansi += '\x1b[u' // restore
-  return ansi
+  // Save cursor, move to next line, clear to end of screen, restore cursor
+  return '\x1b[s\x1b[1E\x1b[J\x1b[u'
 }
