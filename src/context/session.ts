@@ -361,6 +361,19 @@ export async function listSessions(): Promise<SessionInfo[]> {
   return sessions
 }
 
+/**
+ * List sessions for a specific working directory.
+ *
+ * Returns sessions where cwd matches the given path, sorted by most recently updated.
+ *
+ * @param cwd The working directory path to filter by
+ * @returns Array of session info for the given cwd
+ */
+export async function listSessionsByCwd(cwd: string): Promise<SessionInfo[]> {
+  const allSessions = await listSessions()
+  return allSessions.filter((s) => s.cwd === cwd)
+}
+
 // ---------------------------------------------------------------------------
 // Session management
 // ---------------------------------------------------------------------------

@@ -49,7 +49,7 @@ interface CliArgs {
   prompt?: string
   maxTurns?: number
   permissionMode: PermissionMode
-  resume?: string
+  resume?: string | true  // true = auto-detect, string = explicit session-id
   cwd: string
   enableThinking: boolean
 }
@@ -88,7 +88,14 @@ function parseArgs(): CliArgs {
         result.permissionMode = 'bypassPermissions'
         break
       case '--resume':
-        result.resume = args[++i]
+        // Check if next arg is a session-id or another flag
+        const nextResumeArg = args[i + 1]
+        if (nextResumeArg && !nextResumeArg.startsWith('-')) {
+          result.resume = nextResumeArg
+          i++
+        } else {
+          result.resume = true  // Auto-resume mode
+        }
         break
       case '--thinking':
         result.enableThinking = true
@@ -134,7 +141,8 @@ ${bold('Options:')}
   --permission-mode <mode>     default|plan|acceptEdits|bypassPermissions
   --dangerously-skip-permissions  Bypass all permission checks
   --thinking                   Enable extended thinking
-  --resume <session-id>        Resume a previous session
+  --resume [session-id]        Resume session (auto-detect in cwd if no id)
+                               Sessions stored in ~/.nanoagent/sessions/<uuid>
   -h, --help                   Show this help
   --version                    Show version
 
@@ -490,6 +498,79 @@ interface SessionState {
 }
 
 // ---------------------------------------------------------------------------
+// Auto-Resume Handler
+// ---------------------------------------------------------------------------
+
+/**
+ * Handle auto-resume logic when --resume is used without session-id.
+ *
+ * @param cwd Current working directory
+ * @returns Selected session-id, or null if user wants to abort
+ */
+async function handleAutoResume(cwd: string): Promise<string | null> {
+  const { listSessionsByCwd, getSessionDir } = await import('./context/session.js')
+  const sessions = await listSessionsByCwd(cwd)
+
+  if (sessions.length === 0) {
+    console.error(red('No previous sessions found in this directory.'))
+    console.error(dim('Use nanoagent --resume <session-id> to resume a specific session.'))
+    console.error(dim('Use /resume in REPL to see all available sessions.'))
+    return null
+  }
+
+  if (sessions.length === 1) {
+    const s = sessions[0]!
+    const sessionPath = getSessionDir(s.id).replace(process.env.HOME || '', '~')
+    const date = new Date(s.updatedAt).toLocaleString()
+    console.log(dim(`Auto-resuming session: ${sessionPath}`))
+    console.log(dim(`  Last updated: ${date} (${s.messageCount} messages)`))
+    return s.id
+  }
+
+  // Multiple sessions — show selection list
+  console.log('')
+  console.log(blue('Multiple sessions found in this directory:'))
+  console.log('')
+  for (const s of sessions.slice(0, 10)) {
+    const sessionPath = getSessionDir(s.id).replace(process.env.HOME || '', '~')
+    const date = new Date(s.updatedAt).toLocaleString()
+    console.log(`  ${blue(s.id.slice(0, 8))}  ${dim(date)}  ${dim(`(${s.messageCount} msgs)`)}`)
+    console.log(`           ${dim(sessionPath)}`)
+  }
+  if (sessions.length > 10) {
+    console.log(dim(`  ... and ${sessions.length - 10} more`))
+  }
+  console.log('')
+  console.log(dim('Enter session-id prefix (or press Enter to abort):'))
+
+  // Wait for user input
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  })
+
+  return new Promise((resolve) => {
+    rl.question(`  ${gold('❯')} `, (answer) => {
+      rl.close()
+      const input = answer.trim().toLowerCase()
+      if (!input) {
+        console.log(dim('Aborted.'))
+        resolve(null)
+        return
+      }
+      // Match by prefix
+      const match = sessions.find((s) => s.id.toLowerCase().startsWith(input))
+      if (match) {
+        resolve(match.id)
+      } else {
+        console.error(red(`No session found matching "${input}".`))
+        resolve(null)
+      }
+    })
+  })
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -519,11 +600,27 @@ async function main(): Promise<void> {
   // Handle --resume: load previous session or create new
   let sessionId: string
   let resumedMessages: Message[] = []
-  if (cliArgs.resume) {
+
+  if (cliArgs.resume === true) {
+    // Auto-resume mode — detect sessions in cwd
+    const selectedId = await handleAutoResume(cliArgs.cwd)
+    if (!selectedId) {
+      process.exit(1)
+    }
+    sessionId = selectedId
+    resumedMessages = await loadSession(sessionId)
+    if (resumedMessages.length === 0) {
+      console.error(red(`Session ${sessionId} is empty.`))
+      process.exit(1)
+    }
+  } else if (cliArgs.resume) {
+    // Explicit session-id provided
     sessionId = cliArgs.resume
     resumedMessages = await loadSession(sessionId)
     if (resumedMessages.length === 0) {
-      console.error(red(`Session ${sessionId} not found or empty.`))
+      const { getSessionDir } = await import('./context/session.js')
+      const sessionPath = getSessionDir(sessionId).replace(process.env.HOME || '', '~')
+      console.error(red(`Session not found or empty: ${sessionPath}`))
       process.exit(1)
     }
   } else {

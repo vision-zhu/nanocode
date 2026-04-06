@@ -82,7 +82,7 @@ const resumeCommand: SlashCommand = {
   name: 'resume',
   description: 'Resume a previous session',
   async execute(args, ctx) {
-    const { listSessions } = await import('../context/session.js')
+    const { listSessions, getSessionDir } = await import('../context/session.js')
 
     if (!args.trim()) {
       const sessions = await listSessions()
@@ -91,7 +91,9 @@ const resumeCommand: SlashCommand = {
       for (const s of sessions.slice(0, 10)) {
         const date = new Date(s.updatedAt).toLocaleString()
         const shortCwd = s.cwd.replace(process.env.HOME || '', '~') || '(unknown)'
-        lines.push(`  ${blue(s.id.slice(0, 8))}  ${dim(date)}  ${shortCwd}  ${dim(`(${s.messageCount} msgs)`)}`)
+        const sessionPath = getSessionDir(s.id).replace(process.env.HOME || '', '~')
+        lines.push(`  ${blue(s.id.slice(0, 8))}  ${dim(date)}  ${shortCwd}`)
+        lines.push(`           ${dim(sessionPath)}  ${dim(`(${s.messageCount} msgs)`)}`)
       }
       lines.push('', dim('Use /resume <session-id-prefix> to resume.'))
       return lines.join('\n')
@@ -106,7 +108,8 @@ const resumeCommand: SlashCommand = {
 
     const err = await ctx.resumeSession(match.id)
     if (err) return err
-    return `Resumed session ${blue(match.id.slice(0, 8))} (${match.messageCount} messages).`
+    const sessionPath = getSessionDir(match.id).replace(process.env.HOME || '', '~')
+    return `Resumed session ${blue(match.id.slice(0, 8))} (${match.messageCount} messages).\n  ${dim(sessionPath)}`
   },
 }
 
