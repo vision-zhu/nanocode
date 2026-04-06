@@ -13,61 +13,60 @@
 // ---------------------------------------------------------------------------
 
 export const COMPACT_PROMPT = `\
-Your task is to create a detailed summary of this conversation that will \
-replace the conversation history. This summary will be used as context for \
-continuing the conversation, so it must preserve all important information.
+你的任务是创建此对话的详细摘要，以 \
+替换对话历史。此摘要将用作 \
+继续对话的上下文，因此必须保留所有重要信息。
 
-The summary should be detailed enough that a reader could continue the \
-conversation without losing important context.
+摘要应详细到读者无需丢失重要上下文即可 \
+继续对话。
 
-Please organize the summary into the following sections:
+请将摘要组织成以下部分：
 
-1. **Primary Request and Intent**: What is the user trying to accomplish? \
-What are their goals?
+1. **主要请求和意图**：用户试图实现什么？ \
+他们的目标是什么？
 
-2. **Key Technical Concepts**: Important technical details, architecture \
-decisions, algorithms discussed
+2. **关键技术概念**：重要的技术细节、架构 \
+决策、讨论的算法
 
-3. **Files and Code Sections**: Important files referenced or modified, with \
-key code snippets preserved verbatim (include file paths and line numbers)
+3. **文件和代码部分**：提及或修改的重要文件，包含 \
+完整的代码片段（包含文件路径和行号）
 
-4. **Errors and fixes**: Any errors encountered and their resolutions
+4. **错误和修复**：遇到的任何错误及其解决方法
 
-5. **Problem Solving**: Approaches tried, what worked and what didn't
+5. **问题解决**：尝试的方法、哪些有效和哪些无效
 
-6. **All user messages**: preserve the exact content and intent of all user \
-messages
+6. **所有用户消息**：保留所有用户消息的确切内容和意图
 
-7. **Pending Tasks**: Tasks that still need to be completed
+7. **待办任务**：仍需完成的任务
 
-8. **Current Work**: What is currently being worked on
+8. **当前工作**：当前正在处理的内容
 
-9. **Optional Next Step**: If there is a clear next step, describe it \
-(should align with user's latest request)
+9. **可选下一步**：如果有明确的下一步，请描述 \
+（应与用户的最新请求一致）
 
-Important guidelines:
-- Preserve ALL file paths, code snippets, and error messages VERBATIM
-- Include specific line numbers where code was modified
-- Keep exact command-line invocations and their outputs
-- Maintain the chronological order of events
-- Be specific - include actual values, names, and identifiers rather than \
-generic descriptions`
+重要指导原则：
+- 逐字保留所有文件路径、代码片段和错误消息
+- 包含代码修改的具体行号
+- 保持确切的命令行调用及其输出
+- 保持事件的时间顺序
+- 具体化——包含实际值、名称和标识符，而不是 \
+泛泛的描述`
 
 // ---------------------------------------------------------------------------
 // Compact system instruction
 // ---------------------------------------------------------------------------
 
 /**
- * System-level instruction prepended when asking the model to compact.
- * This tells the model its role is to summarize, not to continue acting
- * as a coding agent.
+ * 用于压缩时的系统级指令。
+ * 这告诉模型它的角色是总结，而不是继续充当
+ * 编码代理。
  */
 export const COMPACT_SYSTEM_INSTRUCTION = `\
-You are a conversation summarizer. Your job is to create a detailed, \
-structured summary of the conversation provided to you. You must follow \
-the format and guidelines specified in the user message exactly. Do NOT \
-attempt to continue the conversation, answer questions, or take any \
-actions. Only produce the summary.`
+你是一个对话总结器。你的工作是创建提供给你的对话的详细、 \
+结构化摘要。你必须完全按照用户消息中指定的 \
+格式和指导原则执行。不要 \
+尝试继续对话、回答问题或采取任何 \
+操作。仅生成摘要。`
 
 // ---------------------------------------------------------------------------
 // Compact boundary marker
@@ -87,9 +86,9 @@ export function formatCompactSummary(summary: string): string {
   return `\
 ${COMPACT_BOUNDARY_MARKER}
 
-The following is a summary of the conversation so far. Continue the \
-conversation from where the summary leaves off. Do NOT repeat information \
-already covered in the summary — pick up where it ends.
+	以下是到目前为止的对话摘要。从摘要结束的地方继续 \
+	对话。不要重复摘要中已覆盖的信息—— \
+	从它结束的地方开始。
 
 ---
 
@@ -97,8 +96,8 @@ ${summary}
 
 ---
 
-The conversation has been compacted. The above summary replaces earlier \
-messages. Continue from where the summary leaves off.`
+	对话已被压缩。上述摘要取代了早期 \
+	消息。从摘要结束处继续。`
 }
 
 // ---------------------------------------------------------------------------
@@ -115,13 +114,13 @@ export function buildCompactUserMessage(
   return `\
 ${COMPACT_PROMPT}
 
-Here is the conversation to summarize:
+以下是需要总结的对话：
 
 <conversation>
 ${messagesText}
 </conversation>
 
-Please produce the summary now, following the 9-section format above.`
+请根据上面的9部分格式生成摘要。`
 }
 
 /**
