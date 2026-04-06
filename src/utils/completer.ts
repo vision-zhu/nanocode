@@ -186,17 +186,22 @@ export function updateSuggestions(
   cwd: string,
 ): void {
   // Check for slash command at start of input
+  // Only show suggestions when input is exactly "/" (no partial command typed yet)
+  if (input === '/') {
+    state.suggestions = getCommandSuggestions('')
+    state.triggerType = '/'
+    state.triggerPos = 0
+    state.selectedIndex = 0
+    state.visible = state.suggestions.length > 0
+    return
+  }
+
+  // If input starts with / but has more characters, hide suggestions
   if (input.startsWith('/')) {
-    const partial = input.slice(1).split(' ')[0] || ''
-    // Only show suggestions if no space yet (still typing command name)
-    if (!input.includes(' ') || input.indexOf(' ') > input.length - 1) {
-      state.suggestions = getCommandSuggestions(partial)
-      state.triggerType = '/'
-      state.triggerPos = 0
-      state.selectedIndex = 0
-      state.visible = state.suggestions.length > 0
-      return
-    }
+    state.suggestions = []
+    state.visible = false
+    state.triggerType = null
+    return
   }
 
   // Check for @ file mention
@@ -270,17 +275,62 @@ export function dismissSuggestions(state: CompleterState): void {
 // Rendering — ANSI inline suggestion dropdown
 // ---------------------------------------------------------------------------
 
-const MAX_VISIBLE = 6
+const MAX_VISIBLE = 10 // For file suggestions only
+const COL_WIDTH = 28 // Width per column in compact view
+
+/**
+ * Render command suggestions in a compact 2-column layout.
+ * No scrolling or selection needed — static display of all commands.
+ */
+function renderCompactCommandList(suggestions: Suggestion[]): { output: string; lineCount: number } {
+  if (suggestions.length === 0) {
+    return { output: '', lineCount: 0 }
+  }
+
+  const lines: string[] = []
+
+  // Build 2-column layout
+  for (let i = 0; i < suggestions.length; i += 2) {
+    const left = suggestions[i]!
+    const right = suggestions[i + 1]
+
+    const leftStr = `  ${blue(left.label.padEnd(COL_WIDTH))}${dim(left.description.slice(0, 30))}`
+    const rightStr = right
+      ? `  ${blue(right.label.padEnd(COL_WIDTH))}${dim(right.description.slice(0, 30))}`
+      : ''
+
+    lines.push(leftStr + rightStr)
+  }
+
+  // ANSI: hide cursor, save position, move down, clear, output, restore, show cursor
+  const ansi =
+    '\x1b[?25l' +   // hide cursor
+    '\x1b[s' +      // save cursor position
+    '\x1b[1E' +     // move to next line
+    '\x1b[J' +      // clear to end of screen
+    lines.join('\n') +
+    '\x1b[u' +      // restore cursor position
+    '\x1b[?25h'     // show cursor
+
+  return { output: ansi, lineCount: lines.length }
+}
 
 /**
  * Render suggestions below the current line using ANSI escape codes.
  * Uses a scrolling window that follows the selection (carousel).
+ * For slash commands, uses compact 2-column layout instead.
  */
 export function renderSuggestions(state: CompleterState): { output: string; lineCount: number } {
   if (!state.visible || state.suggestions.length === 0) {
     return { output: '', lineCount: 0 }
   }
 
+  // Slash commands: use compact 2-column layout (no selection needed)
+  if (state.triggerType === '/') {
+    return renderCompactCommandList(state.suggestions)
+  }
+
+  // File suggestions: use scrolling window with selection highlight
   const total = state.suggestions.length
   const sel = state.selectedIndex
 
@@ -318,11 +368,13 @@ export function renderSuggestions(state: CompleterState): { output: string; line
 
   // Save cursor, move to next line, clear to end of screen, output content, restore cursor
   const ansi =
-    '\x1b[s' +           // Save cursor position
-    '\x1b[1E' +          // Move to beginning of next line
-    '\x1b[J' +           // Clear from cursor to end of screen
-    lines.join('\n') +   // Output suggestion lines
-    '\x1b[u'             // Restore cursor position
+    '\x1b[?25l' +       // Hide cursor
+    '\x1b[s' +          // Save cursor position
+    '\x1b[1E' +         // Move to beginning of next line
+    '\x1b[J' +          // Clear from cursor to end of screen
+    lines.join('\n') +  // Output suggestion lines
+    '\x1b[u' +          // Restore cursor position
+    '\x1b[?25h'         // Show cursor
 
   return { output: ansi, lineCount: lines.length }
 }
@@ -332,6 +384,6 @@ export function renderSuggestions(state: CompleterState): { output: string; line
  */
 export function clearRenderedSuggestions(lineCount: number): string {
   if (lineCount === 0) return ''
-  // Save cursor, move to next line, clear to end of screen, restore cursor
-  return '\x1b[s\x1b[1E\x1b[J\x1b[u'
+  // Hide cursor, save position, clear, restore, show cursor
+  return '\x1b[?25l\x1b[s\x1b[1E\x1b[J\x1b[u\x1b[?25h'
 }
