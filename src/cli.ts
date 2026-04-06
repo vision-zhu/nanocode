@@ -52,6 +52,7 @@ interface CliArgs {
   resume?: string | true  // true = auto-detect, string = explicit session-id
   cwd: string
   enableThinking: boolean
+  debug: boolean
 }
 
 function parseArgs(): CliArgs {
@@ -62,6 +63,7 @@ function parseArgs(): CliArgs {
     permissionMode: 'bypassPermissions',
     cwd: process.cwd(),
     enableThinking: false,
+    debug: false,
   }
 
   for (let i = 0; i < args.length; i++) {
@@ -99,6 +101,9 @@ function parseArgs(): CliArgs {
         break
       case '--thinking':
         result.enableThinking = true
+        break
+      case '--debug':
+        result.debug = true
         break
       case '--help':
       case '-h':
@@ -141,6 +146,7 @@ ${bold('Options:')}
   --permission-mode <mode>     default|plan|acceptEdits|bypassPermissions
   --dangerously-skip-permissions  Bypass all permission checks
   --thinking                   Enable extended thinking
+  --debug                      Save API requests/responses to session debug log
   --resume [session-id]        Resume session (auto-detect in cwd if no id)
                                Sessions stored in ~/.nanoagent/sessions/<uuid>
   -h, --help                   Show this help
@@ -495,6 +501,7 @@ interface SessionState {
   permissionMode: PermissionMode
   systemPromptBlocks: SystemPromptBlock[]
   enableThinking: boolean
+  debug: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -706,6 +713,7 @@ async function main(): Promise<void> {
     permissionMode: cliArgs.permissionMode,
     systemPromptBlocks,
     enableThinking: cliArgs.enableThinking,
+    debug: cliArgs.debug,
   }
 
   // Session is lazily initialized on first saveMessage — no eager creation
@@ -1113,6 +1121,7 @@ async function runAgent(
     onPermissionRequest: createPermissionHandler(rl),
     abortSignal: abortController.signal,
     enableThinking: state.enableThinking,
+    debug: state.debug,
     readFileState,
     fileHistory,
   }

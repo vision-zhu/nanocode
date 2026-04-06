@@ -238,6 +238,7 @@ export interface QueryParams {
   abortSignal?: AbortSignal
   enableThinking?: boolean
   thinkingBudget?: number
+  debug?: boolean  // Save API requests/responses to debug log
   // Injected services
   readFileState: FileStateCache
   fileHistory: FileHistoryState

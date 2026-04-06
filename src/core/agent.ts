@@ -372,6 +372,8 @@ export async function* agentLoop(
         enableThinking: params.enableThinking,
         thinkingBudget: params.thinkingBudget,
         abortSignal: params.abortSignal,
+        sessionId: params.sessionId,
+        debug: params.debug,
       })) {
         // Pass through streaming events to caller
         yield event

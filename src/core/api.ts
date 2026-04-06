@@ -6,6 +6,9 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk'
+import { appendFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { homedir } from 'node:os'
 import type {
   Message,
   StreamEvent,
@@ -62,11 +65,29 @@ export interface CallModelParams {
   enableThinking?: boolean
   thinkingBudget?: number
   abortSignal?: AbortSignal
+  sessionId?: string  // For debug logging
+  debug?: boolean     // Save requests/responses to debug log
 }
 
 // ---------------------------------------------------------------------------
 // Streaming API Call
 // ---------------------------------------------------------------------------
+
+/** Debug log file name within session directory */
+const DEBUG_LOG_FILE = 'debug.log'
+
+/** Save API request/response to debug log */
+async function saveDebugLog(
+  sessionId: string,
+  type: 'request' | 'response',
+  data: object,
+): Promise<void> {
+  const sessionDir = join(homedir(), '.nanoagent', 'sessions', sessionId)
+  const logPath = join(sessionDir, DEBUG_LOG_FILE)
+  const timestamp = new Date().toISOString()
+  const entry = `\n=== ${type.toUpperCase()} ${timestamp} ===\n${JSON.stringify(data, null, 2)}\n`
+  await appendFile(logPath, entry, 'utf-8').catch(() => {})
+}
 
 export async function* callModel(
   params: CallModelParams,
@@ -98,6 +119,12 @@ export async function* callModel(
     // Thinking requires beta endpoint
     delete request.max_tokens
     request.max_tokens = params.modelConfig.maxOutputTokens
+  }
+
+  // Debug: Save request (exclude stream flag for readability)
+  if (params.debug && params.sessionId) {
+    const requestForLog = { ...request, stream: undefined }
+    await saveDebugLog(params.sessionId, 'request', requestForLog)
   }
 
   // Execute with retry
@@ -260,6 +287,17 @@ export async function* callModel(
     }
     for (const tu of toolUseBlocks) {
       content.push(tu)
+    }
+
+    // Debug: Save response (exclude thinking blocks for readability)
+    if (params.debug && params.sessionId) {
+      const contentForLog = content.filter(b => b.type !== 'thinking' && b.type !== 'redacted_thinking')
+      await saveDebugLog(params.sessionId, 'response', {
+        role: 'assistant',
+        content: contentForLog,
+        usage,
+        stopReason,
+      })
     }
 
     yield {
