@@ -422,3 +422,33 @@ export async function updateSessionSummary(
 ): Promise<void> {
   await writeMeta(sessionId, { summary })
 }
+
+/**
+ * Extract user input history from session transcript.
+ *
+ * Returns an array of user text inputs (non-slash-command inputs)
+ * in chronological order, suitable for readline history.
+ *
+ * @param sessionId The session identifier
+ * @returns Array of user input strings
+ */
+export async function getInputHistory(sessionId: string): Promise<string[]> {
+  const entries = await loadSessionEntries(sessionId)
+  const history: string[] = []
+
+  for (const entry of entries) {
+    if (entry.type === 'user' && entry.message.content) {
+      for (const block of entry.message.content) {
+        if (block.type === 'text') {
+          const text = block.text.trim()
+          // Skip slash commands and empty inputs
+          if (text && !text.startsWith('/')) {
+            history.push(text)
+          }
+        }
+      }
+    }
+  }
+
+  return history
+}

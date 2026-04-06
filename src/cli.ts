@@ -571,6 +571,67 @@ async function handleAutoResume(cwd: string): Promise<string | null> {
 }
 
 // ---------------------------------------------------------------------------
+// History Display
+// ---------------------------------------------------------------------------
+
+/**
+ * Display historical messages from a resumed session.
+ * Renders the conversation as if it just happened.
+ */
+function displayHistoryMessages(messages: Message[]): void {
+  for (const msg of messages) {
+    if (msg.role === 'user') {
+      // User message: display text input or tool results
+      const textBlocks = msg.content.filter(b => b.type === 'text')
+      const toolResultBlocks = msg.content.filter(b => b.type === 'tool_result')
+
+      // Display user text input with input box style
+      for (const block of textBlocks) {
+        if (block.type === 'text') {
+          process.stdout.write(drawInputLine())
+          process.stdout.write(inputPrompt())
+          process.stdout.write(block.text + '\n')
+          process.stdout.write(closeInputBox())
+        }
+      }
+
+      // Display tool results (if this was a tool response, not user input)
+      for (const block of toolResultBlocks) {
+        if (block.type === 'tool_result') {
+          const result = typeof block.content === 'string' ? block.content : ''
+          let output = result
+          // Colorize diff for Edit tool results
+          if (output.includes('@@ ') || (output.includes('+') && output.includes('-'))) {
+            output = colorizeDiff(output)
+          }
+          if (block.is_error) {
+            process.stdout.write(formatToolError(output.slice(0, 2000)))
+          } else {
+            process.stdout.write(formatToolResult('Tool', output.slice(0, 2000), block.is_error || false))
+          }
+        }
+      }
+    } else if (msg.role === 'assistant') {
+      // Assistant message: display text and tool_use
+      for (const block of msg.content) {
+        if (block.type === 'text') {
+          process.stdout.write(renderMarkdown(block.text))
+          if (!block.text.endsWith('\n')) {
+            process.stdout.write('\n')
+          }
+        } else if (block.type === 'tool_use') {
+          process.stdout.write(formatToolStart(block.name, summarizeInput(block.name, block.input)))
+        } else if (block.type === 'thinking') {
+          if (gEnableThinking) {
+            process.stdout.write(formatThinking(block.thinking))
+          }
+        }
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -590,7 +651,7 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  const { initSession, saveMessage, loadSession } = await import('./context/session.js')
+  const { initSession, saveMessage, loadSession, getInputHistory } = await import('./context/session.js')
 
   const modelConfig = getModelConfig(cliArgs.model)
   const costTracker = createCostTracker()
@@ -686,6 +747,9 @@ async function main(): Promise<void> {
   ]))
   console.log(dim('  /help for commands · Ctrl+C abort or exit\n'))
 
+  // Set global thinking flag for history display
+  gEnableThinking = state.enableThinking
+
   // Pre-load tools once for both commands and agent
   const { initializeTools } = await import('./tools/registry.js')
   const tools = await initializeTools()
@@ -714,6 +778,16 @@ async function main(): Promise<void> {
       return [[], line]
     },
   })
+
+  // Set up input history from resumed session
+  if (resumedMessages.length > 0) {
+    const inputHistory = await getInputHistory(sessionId)
+    // Add to readline history (most recent first for up-arrow)
+    for (const input of inputHistory.reverse()) {
+      // @ts-ignore - readline has internal history array
+      rl.history.push(input)
+    }
+  }
 
   // Dynamic prompt: when input starts with / or @, switch to blue-tinted prompt
   // The trick: append an unclosed blue ANSI code to the prompt, so typed text inherits the color
@@ -813,7 +887,15 @@ async function main(): Promise<void> {
 
   let messages: Message[] = resumedMessages
   if (resumedMessages.length > 0) {
-    console.log(dim(`  Resumed session ${sessionId.slice(0, 8)} (${resumedMessages.length} messages)\n`))
+    // Display session resume header
+    console.log('')
+    console.log(dim(`  ─── Resumed session ${sessionId.slice(0, 8)} (${resumedMessages.length} messages) ───`))
+    console.log('')
+    // Display history messages as if they just happened
+    displayHistoryMessages(resumedMessages)
+    console.log('')
+    console.log(dim(`  ─── End of history (${resumedMessages.length} messages) ───`))
+    console.log('')
   }
   let processing = false
   let currentAbort: AbortController | null = null
