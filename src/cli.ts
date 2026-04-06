@@ -59,7 +59,7 @@ function parseArgs(): CliArgs {
   const result: CliArgs = {
     model: process.env.ANTHROPIC_MODEL || 'sonnet',
     apiKey: process.env.ANTHROPIC_API_KEY || process.env.OPENROUTER_API_KEY || '',
-    permissionMode: 'default',
+    permissionMode: 'bypassPermissions',
     cwd: process.cwd(),
     enableThinking: false,
   }
@@ -587,7 +587,7 @@ async function main(): Promise<void> {
     `${dim('Model:')} ${modelConfig.model}`,
     `${dim('CWD:')}   ${shortCwd}`,
   ]))
-  console.log(dim('  /help for commands · Ctrl+C abort · Ctrl+D exit\n'))
+  console.log(dim('  /help for commands · Ctrl+C abort or exit\n'))
 
   // Pre-load tools once for both commands and agent
   const { initializeTools } = await import('./tools/registry.js')
@@ -685,6 +685,9 @@ async function main(): Promise<void> {
       setImmediate(() => {
         const line = (rl as any).line || ''
 
+        // Clear suggestions first to prevent readline refresh from corrupting display
+        clearSuggestionDisplay()
+
         // Switch prompt to blue only for /commands (whole line is the command)
         const wantBlue = line.startsWith('/')
         if (wantBlue && !currentPromptIsBlue) {
@@ -697,12 +700,15 @@ async function main(): Promise<void> {
           ;(rl as any)._refreshLine()
         }
 
-        // Update suggestions AFTER prompt refresh so they render on top
+        // No suggestions for slash commands — user can use /help if needed
+        if (line.startsWith('/')) {
+          return
+        }
+
+        // Update suggestions for file mentions (@)
         updateSuggestions(completerState, line, cliArgs.cwd)
         if (completerState.visible) {
           showSuggestionDisplay()
-        } else {
-          clearSuggestionDisplay()
         }
       })
     })
@@ -716,7 +722,7 @@ async function main(): Promise<void> {
   let currentAbort: AbortController | null = null
   const inputQueue: string[] = []
 
-  // Handle Ctrl+C at REPL level: abort generation, don't exit
+  // Handle Ctrl+C: abort generation if processing, otherwise exit
   rl.on('SIGINT', () => {
     if (processing && currentAbort) {
       currentAbort.abort()
@@ -724,8 +730,8 @@ async function main(): Promise<void> {
     } else {
       dismissSuggestions(completerState)
       clearSuggestionDisplay()
-      process.stdout.write('\n' + dim('(Ctrl+D to exit)') + '\n')
-      rl.prompt()
+      console.log(dim('\nGoodbye!'))
+      process.exit(0)
     }
   })
 
@@ -828,15 +834,12 @@ async function main(): Promise<void> {
   rl.on('line', (line) => {
     // If suggestions are visible and user hasn't typed a complete command,
     // Enter accepts the suggestion instead of submitting.
-    if (!completerState.visible) {
-      updateSuggestions(completerState, line, cliArgs.cwd)
-    }
-    if (completerState.visible && completerState.suggestions.length > 0) {
-      // Don't intercept if the input is already a complete slash command or message
-      const isCompleteCommand = line.startsWith('/') && line.includes(' ')
-      const isExactCommand = line.startsWith('/') &&
-        completerState.suggestions.some(s => s.value.trim() === line.trim())
-      if (!isCompleteCommand && !isExactCommand) {
+    // Skip suggestion handling for slash commands — no auto-suggestions for them
+    if (!line.startsWith('/')) {
+      if (!completerState.visible) {
+        updateSuggestions(completerState, line, cliArgs.cwd)
+      }
+      if (completerState.visible && completerState.suggestions.length > 0) {
         const newLine = acceptSuggestion(completerState, line)
         clearSuggestionDisplay()
         // readline already moved to a new line after Enter.
@@ -847,9 +850,6 @@ async function main(): Promise<void> {
         ;(rl as any)._refreshLine()
         return
       }
-      // Complete command — fall through to execute it
-      dismissSuggestions(completerState)
-      clearSuggestionDisplay()
     }
     // Backslash continuation: line ending with \ → buffer and wait for more
     if (line.endsWith('\\') && !line.endsWith('\\\\')) {
