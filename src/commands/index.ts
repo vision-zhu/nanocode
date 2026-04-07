@@ -246,30 +246,24 @@ const exitCommand: SlashCommand = {
 }
 
 const INIT_PROMPT = `\
-Analyze this codebase and create a NANOAGENT.md file in the project root.
+分析此代码库并在项目根目录创建一个NANOAGENT.md文件。
 
-Do the following:
-1. Read key project files to understand the codebase:
-   - Package manifests: package.json, Cargo.toml, pyproject.toml, go.mod, pom.xml, etc.
-   - Build/CI configs: Makefile, .github/workflows/, Dockerfile, etc.
-   - Existing docs: README.md, CONTRIBUTING.md
-   - Linter/formatter configs: .eslintrc*, prettier*, ruff.toml, .golangci.yml, etc.
-   - Existing AI configs: CLAUDE.md, .cursorrules, .cursor/rules, AGENTS.md, .github/copilot-instructions.md
-   - Use Glob and Read tools to explore. Check the directory structure first with Glob.
+执行以下操作：
+1. 阅读关键项目文件以理解代码库：
+   - 包清单：package.json, Cargo.toml, pyproject.toml, go.mod, pom.xml等
+   - 构建/CI配置：Makefile, .github/workflows/, Dockerfile等
+   - 现有文档：README.md, CONTRIBUTING.md
+   - Linter/formatter配置：.eslintrc*, prettier*, ruff.toml, .golangci.yml等
+   - 现有AI配置：CLAUDE.md, .cursorrules, .cursor/rules, AGENTS.md等
+   - 使用Glob和Read工具探索。首先用Glob检查目录结构。
 
-2. Based on your analysis, write a NANOAGENT.md file using the Write tool. The file should be concise (under 100 lines) and include ONLY:
-   - Common build, lint, test, and run commands (especially non-standard ones the AI wouldn't guess)
-   - Key architectural patterns and conventions
-   - Code style rules that differ from language defaults
-   - Important gotchas or non-obvious workflows
-   - File/directory structure overview if it's not obvious
+2. 根据分析，使用Write工具编写NANOAGENT.md文件。文件应简洁（少于100行）且仅包含：
+   - 常用构建、检查、测试和运行命令（尤其是AI无法猜到的非常规命令）
+   - 重要的架构模式和惯例
+   - 与语言默认值不同的代码样式规则
+   - 重要注意事项或非明显工作流程
 
-3. Do NOT include:
-   - Obvious things the AI can figure out from reading code (like "this is a TypeScript project")
-   - Generic advice that applies to all projects
-   - Long explanations — keep it terse, each rule on one line
-
-If NANOAGENT.md or CLAUDE.md already exists, read it first, then ask the user if they want to overwrite or merge.
+如果NANOAGENT.md或CLAUDE.md已存在，先阅读，然后询问用户是否要覆盖或合并。
 `
 
 const initCommand: SlashCommand = {
